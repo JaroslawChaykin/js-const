@@ -119,6 +119,25 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   return newRequire;
 })({"assets/image.webp":[function(require,module,exports) {
 module.exports = "/image.4d2df407.webp";
+},{}],"classes/blocks.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Block = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Block = function Block(type, value, options) {
+  _classCallCheck(this, Block);
+
+  this.type = type;
+  this.value = value;
+  this.options = options;
+};
+
+exports.Block = Block;
 },{}],"model.js":[function(require,module,exports) {
 "use strict";
 
@@ -129,23 +148,35 @@ exports.model = void 0;
 
 var _image = _interopRequireDefault(require("./assets/image.webp"));
 
+var _blocks = require("./classes/blocks");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var model = [{
-  type: 'title',
-  value: 'Hello world from JS'
-}, {
-  type: 'text',
-  value: 'Here we and go some text'
-}, {
-  type: 'columns',
-  value: ['1111111', '2222222', '3333333']
-}, {
-  type: 'image',
-  value: _image.default
-}];
+var model = [new _blocks.Block('title', 'Конструктор сайтов', {
+  tag: 'h1',
+  styles: {
+    background: 'linear-gradient(to right, #ff0099, #493240)',
+    color: '#fff',
+    'text-align': 'center',
+    padding: '1.5rem'
+  }
+}), new _blocks.Block('Title', 'Заголовок поменьше', {
+  tag: 'h2',
+  styles: {
+    color: '#d2d2d2'
+  }
+}), new _blocks.Block('text', 'Here we and go some text', {
+  styles: {
+    color: '#d2d2d2'
+  }
+}), new _blocks.Block('columns', ['1111111', '2222222', '3333333'], {
+  styles: {
+    background: 'black',
+    color: '#fff'
+  }
+}), new _blocks.Block('image', _image.default)];
 exports.model = model;
-},{"./assets/image.webp":"assets/image.webp"}],"utils.js":[function(require,module,exports) {
+},{"./assets/image.webp":"assets/image.webp","./classes/blocks":"classes/blocks.js"}],"utils.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -153,13 +184,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.row = row;
 exports.col = col;
+exports.css = css;
 
-function row(content) {
-  return "<div class=\"row\">".concat(content, "</div>");
+function row(content, styles) {
+  return "<div class=\"row\" style=\"".concat(styles, "\">").concat(content, "</div>");
 }
 
 function col(content) {
   return "<div class=\"col-sm\">".concat(content, "</div>");
+}
+
+function css() {
+  var styles = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  var toString = function toString(key) {
+    return "".concat(key, ": ").concat(styles[key]);
+  };
+
+  return Object.keys(styles).map(toString).join(';');
 }
 },{}],"templates.js":[function(require,module,exports) {
 "use strict";
@@ -172,16 +214,20 @@ exports.templates = void 0;
 var _utils = require("./utils");
 
 function title(block) {
-  return (0, _utils.row)((0, _utils.col)("<h1>".concat(block.value, "</h1>")));
+  var _block$options = block.options,
+      _block$options$tag = _block$options.tag,
+      tag = _block$options$tag === void 0 ? 'h1' : _block$options$tag,
+      styles = _block$options.styles;
+  return (0, _utils.row)((0, _utils.col)("<".concat(tag, ">").concat(block.value, "</").concat(tag, ">")), (0, _utils.css)(styles));
 }
 
 function text(block) {
-  return (0, _utils.row)((0, _utils.col)("<p>".concat(block.value, "</p>")));
+  return (0, _utils.row)((0, _utils.col)("<p>".concat(block.value, "</p>")), (0, _utils.css)(block.options.styles));
 }
 
 function columns(block) {
   var html = block.value.map(_utils.col).join('');
-  return (0, _utils.row)(html);
+  return (0, _utils.row)(html, (0, _utils.css)(block.options.styles));
 }
 
 function image(block) {
@@ -313,7 +359,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57641" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63246" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
